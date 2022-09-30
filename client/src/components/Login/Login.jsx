@@ -1,11 +1,10 @@
 import React from "react";
 import Button from "@mui/material/Button";
-import { Container } from "@mui/material";
 import { styled } from "@mui/system";
 import classes from "./Login.module.css";
-import Dashboard from "../Dashboard/Dashboard";
 import Marquee from "react-fast-marquee";
 import MarqueeText from "../MarqueeText/MarqueeText";
+import useAuth from "../../hooks/useAuth";
 
 const clientId = "46f8b7fe2f6a4e36b35466d68bb81637";
 const redirectUrl = "http://localhost:3000";
@@ -19,6 +18,13 @@ const scope = [
   "user-top-read",
   "user-follow-modify",
   "user-follow-read",
+  "playlist-read-private",
+  "playlist-read-collaborative",
+  "playlist-modify-private",
+  "playlist-modify-public",
+  "app-remote-control",
+  "streaming",
+  "user-read-playback-position",
 ];
 const AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${clientId}&show_dialog=true&redirect_uri=${redirectUrl}&response_type=code&scope=${scope.join(
   " "
@@ -28,6 +34,8 @@ const code = new URLSearchParams(window.location.search).get("code");
 // console.log(code);
 
 function Login(props) {
+  const accessToken = useAuth(code);
+  // console.log(accessToken);
   const clickHandler = () => {
     window.location.href = AUTH_URL;
   };
@@ -42,9 +50,10 @@ function Login(props) {
     },
     padding: "1rem 5rem",
   });
+
   return (
     <div>
-      {!code && (
+      {!accessToken && (
         <div className={classes.buttonDiv}>
           <SpotifyButton onClick={clickHandler}>Connect Spotify</SpotifyButton>
         </div>
@@ -74,7 +83,7 @@ function Login(props) {
       >
         <MarqueeText />
       </Marquee>
-      {code && <Dashboard code={code} />}
+      {accessToken && <h1>Welcome</h1>}
     </div>
   );
 }
