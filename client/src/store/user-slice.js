@@ -3,13 +3,16 @@ import { createSlice } from "@reduxjs/toolkit";
 const userSlice = createSlice({
   name: "user",
   initialState: {
-    user: {}
+    user: {},
+    profileImgUrl: "",
   },
   reducers: {
     setData(state, action) {
       const newState = {
-        user: action.payload.user
+        user: action.payload.user,
+        profileImgUrl: action.payload.url,
       };
+      console.log(newState);
       return newState;
     },
   },

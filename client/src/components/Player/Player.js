@@ -38,7 +38,9 @@ function Player(props) {
       if (response.status === 204) {
         return;
       }
-      dispatch(tracksActions.setCurrentTrack(response.data));
+      dispatch(
+        tracksActions.setCurrentTrack({ setCurrentTrack: response.data })
+      );
       setCurrentlyPlaying(response.data);
     };
     getCurrentlyPlayingTrack();
@@ -64,7 +66,7 @@ function Player(props) {
           >
             <img
               style={{ height: "200px", width: "200px" }}
-              src="https://i.scdn.co/image/ab67616d00001e0296ab64f52273635308b6bf27"
+              src="https://dannythomson.com/wp-content/uploads/2020/05/itunes-3.png"
               alt="sd"
             ></img>
           </Container>
@@ -111,7 +113,7 @@ function Player(props) {
             </Container>
             <Container>
               <Typography variant="h5" sx={{ margin: "auto" }}>
-                Now Playing <br />
+                Not Playing <br />
                 <Typography variant="subtitle1" gutterBottom>
                   <AudiotrackIcon sx={{ marginTop: 1 }} />
                   Playlist

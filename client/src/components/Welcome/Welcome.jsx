@@ -9,6 +9,9 @@ const Welcome = (props) => {
   const dispatch = useDispatch();
   const accessToken = useSelector((state) => state.auth.accessToken);
   const user = useSelector((state) => state.user.user);
+  const currentTrack = useSelector((state) => state.tracks.currentTrack);
+  // const name = currentTrack.data.name;
+  console.log(currentTrack);
 
   useEffect(() => {
     const getUserProfile = async () => {
@@ -22,6 +25,7 @@ const Welcome = (props) => {
       dispatch(
         userActions.setData({
           user: response.data,
+          url: response.data.images[0].url,
         })
       );
     };

@@ -69,13 +69,8 @@ const RecentTracks = () => {
               Recent Tracks
             </Typography>
           </Box>
-          {recentlyPlayedTracks.map((item) => (
-            <Box
-              p={2}
-              textAlign="center"
-              role="presentation"
-              key={item.track.name}
-            >
+          {recentlyPlayedTracks.map((item, i) => (
+            <Box p={2} textAlign="center" role="presentation" key={i}>
               <Typography
                 variant="h6"
                 component="div"
