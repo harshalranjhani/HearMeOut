@@ -1,4 +1,6 @@
-import * as React from "react";
+import React from "react";
+import axios from "axios";
+import { userActions } from "../../store/user-slice";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -15,9 +17,12 @@ import AudiotrackIcon from "@mui/icons-material/Audiotrack";
 import { useSelector, useDispatch } from "react-redux";
 import { uiActions } from "../../store/ui-slice";
 import { authActions } from "../../store/auth-slice";
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+// import { redirect } from "react-router-dom";
 
 const pages = ["Playlists", "Followed Artists"];
-const settings = ["Profile", "Account", "Recent Tracks"];
+const settings = ["Profile", "Feed", "Recent Tracks"];
 
 const ResponsiveAppBar = () => {
   const accessToken = useSelector((state) => state.auth.accessToken);
@@ -52,12 +57,32 @@ const ResponsiveAppBar = () => {
     }
   };
 
+  useEffect(() => {
+    const getUserProfile = async () => {
+      const response = await axios.get("https://api.spotify.com/v1/me", {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(response);
+      dispatch(
+        userActions.setData({
+          user: response.data,
+          url: response.data.images[0].url,
+        })
+      );
+    };
+    getUserProfile();
+  }, [accessToken, dispatch]);
+
   const logoutHandler = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("userAccess");
     localStorage.removeItem("isLoggedIn");
     dispatch(authActions.logout());
+    // return redirect("/");
   };
 
   return (
@@ -69,7 +94,7 @@ const ResponsiveAppBar = () => {
             variant="h6"
             noWrap
             component="a"
-            href="#"
+            href="/"
             sx={{
               mr: 2,
               display: { xs: "none", md: "flex" },
@@ -180,7 +205,8 @@ const ResponsiveAppBar = () => {
                           textAlign="center"
                           onClick={toggleMenu.bind(null, setting)}
                         >
-                          {setting}
+                          {setting === "Feed" && <Link to="/feed">Feed</Link>}
+                          {setting!=="Feed" && setting}
                         </Typography>
                       </MenuItem>
                     ))}

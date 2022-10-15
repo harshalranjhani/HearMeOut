@@ -9,22 +9,26 @@ import Search from "./components/Search/Search";
 import Player from "./components/Player/Player";
 import { Alert, AlertTitle } from "@mui/material";
 import RecentTracks from "./components/Recent Tracks/RecentTracks";
+import { Routes, Route, Link } from "react-router-dom";
+import Home from "./components/Home";
+import Feed from "./components/Feed/Feed";
 
 function App() {
   const accessToken = useSelector((state) => state.auth.accessToken);
   // const accessToken = JSON.parse(localStorage.getItem("accessToken"));
   console.log(accessToken);
   const currentUser = useSelector((state) => state.user.user);
+  console.log(currentUser);
   return (
     <div className="App">
       <Navbar />
-      {!accessToken && <Login />}
       {accessToken && <Playlists />}
       {accessToken && <FollowedArtists />}
       {accessToken && <RecentTracks />}
-      {accessToken && <Welcome />}
-      {accessToken && <Player />}
-      {accessToken && <Search />}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/feed" element={<Feed />} />
+      </Routes>
       {!currentUser && (
         <Alert severity="error" sx={{ width: "50vh", margin: "auto" }}>
           <AlertTitle>Error</AlertTitle>
