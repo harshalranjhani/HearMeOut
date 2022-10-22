@@ -9,7 +9,7 @@ import Search from "./components/Search/Search";
 import Player from "./components/Player/Player";
 import { Alert, AlertTitle } from "@mui/material";
 import RecentTracks from "./components/Recent Tracks/RecentTracks";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, Navigate } from "react-router-dom";
 import Home from "./components/Home";
 import Feed from "./components/Feed/Feed";
 
@@ -27,7 +27,8 @@ function App() {
       {accessToken && <RecentTracks />}
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/feed" element={<Feed />} />
+        {accessToken && <Route path="/feed" element={<Feed />} />}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       {!currentUser && (
         <Alert severity="error" sx={{ width: "50vh", margin: "auto" }}>

@@ -8,6 +8,7 @@ const userSlice = createSlice({
   },
   reducers: {
     setData(state, action) {
+      console.log("setting user data from navbar component...");
       const newState = {
         user: action.payload.user,
         profileImgUrl: action.payload.url,

@@ -17,12 +17,12 @@ import AudiotrackIcon from "@mui/icons-material/Audiotrack";
 import { useSelector, useDispatch } from "react-redux";
 import { uiActions } from "../../store/ui-slice";
 import { authActions } from "../../store/auth-slice";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 // import { redirect } from "react-router-dom";
 
 const pages = ["Playlists", "Followed Artists"];
-const settings = ["Profile", "Feed", "Recent Tracks"];
+const settings = ["Profile", "Recent Tracks"];
 
 const ResponsiveAppBar = () => {
   const accessToken = useSelector((state) => state.auth.accessToken);
@@ -65,25 +65,45 @@ const ResponsiveAppBar = () => {
           "Content-Type": "application/json",
         },
       });
-      console.log(response);
-      dispatch(
-        userActions.setData({
-          user: response.data,
-          url: response.data.images[0].url,
-        })
-      );
+      // console.log(response.data.images.length);
+      if (!response.data.images.length) {
+        dispatch(
+          userActions.setData({
+            user: response.data,
+            url: "",
+          })
+        );
+      } else {
+        dispatch(
+          userActions.setData({
+            user: response.data,
+            url: response.data.images[0].url,
+          })
+        );
+      }
+      console.log(response.data.email);
+      await axios.post("http://localhost:5000/register", {
+        email: response.data.email,
+      });
     };
-    getUserProfile();
+
+    try {
+      getUserProfile();
+    } catch (e) {
+      console.log(e.message);
+      dispatch(authActions.logout());
+      logoutHandler();
+    }
   }, [accessToken, dispatch]);
 
-  const logoutHandler = () => {
+  const logoutHandler = useCallback(() => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("userAccess");
     localStorage.removeItem("isLoggedIn");
     dispatch(authActions.logout());
     // return redirect("/");
-  };
+  }, [dispatch]);
 
   return (
     <AppBar position="static" color="transparent">
@@ -131,6 +151,7 @@ const ResponsiveAppBar = () => {
                 vertical: "top",
                 horizontal: "left",
               }}
+              open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{
                 display: { xs: "block", md: "none" },
@@ -205,11 +226,18 @@ const ResponsiveAppBar = () => {
                           textAlign="center"
                           onClick={toggleMenu.bind(null, setting)}
                         >
-                          {setting === "Feed" && <Link to="/feed">Feed</Link>}
-                          {setting!=="Feed" && setting}
+                          {setting}
                         </Typography>
                       </MenuItem>
                     ))}
+                    <Link
+                      to="/feed"
+                      style={{ textDecoration: "none", color: "black" }}
+                    >
+                      <MenuItem key="feed">
+                        <Typography textAlign="center">Feed</Typography>
+                      </MenuItem>
+                    </Link>
                     <MenuItem key="logout" onClick={logoutHandler}>
                       <Typography textAlign="center">Logout</Typography>
                     </MenuItem>

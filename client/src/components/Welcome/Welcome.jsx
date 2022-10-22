@@ -11,8 +11,8 @@ const Welcome = (props) => {
   const user = useSelector((state) => state.user.user);
   const currentTrack = useSelector((state) => state.tracks.currentTrack);
   // const name = currentTrack.data.name;
-  console.log(currentTrack);
-  
+  // console.log(name);
+
   return (
     <Typography variant="h5" p={3} width={500} sx={{ marginRight: 0 }}>
       Welcome, {user.display_name}

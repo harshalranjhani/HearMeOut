@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import PlayCircleFilledWhiteIcon from "@mui/icons-material/PlayCircleFilledWhite";
 import PauseCircleFilledIcon from "@mui/icons-material/PauseCircleFilled";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
@@ -15,14 +15,15 @@ import axios from "axios";
 import { tracksActions } from "../../store/tracks-slice";
 import { current } from "@reduxjs/toolkit";
 
-const playerPlaying = true;
-const shuffleOn = false;
-const repeatOn = false;
-
 function Player(props) {
+  const [playerPlaying, setPlayerPlaying] = useState(false);
+  const [repeatOn, setRepeatOn] = useState(false);
+  const [shuffleOn, setShuffleOn] = useState(false);
+  const [songChange, setSongChange] = useState(false);
   const accessToken = useSelector((state) => state.auth.accessToken);
   const dispatch = useDispatch();
   const [currentlyPlaying, setCurrentlyPlaying] = React.useState(null);
+
   React.useEffect(() => {
     const getCurrentlyPlayingTrack = async () => {
       const response = await axios.get(
@@ -35,16 +36,103 @@ function Player(props) {
         }
       );
       console.log(response);
+      // playerPlaying = response.data.is_playing;
+      setPlayerPlaying(response.data.is_playing);
       if (response.status === 204) {
         return;
       }
-      dispatch(
-        tracksActions.setCurrentTrack({ setCurrentTrack: response.data })
-      );
+      dispatch(tracksActions.setCurrentTrack({ currentTrack: response.data }));
       setCurrentlyPlaying(response.data);
     };
     getCurrentlyPlayingTrack();
-  }, [accessToken, dispatch]);
+  }, [accessToken, songChange, dispatch]);
+
+  const getTrack = async () => {
+    const response = await axios.get(
+      "https://api.spotify.com/v1/me/player/currently-playing",
+      {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log(response);
+    setCurrentlyPlaying(response.data);
+    setPlayerPlaying(response.data.is_playing);
+    dispatch(tracksActions.setCurrentTrack({ currentTrack: response.data }));
+  };
+
+  const changeTrack = async (type) => {
+    setSongChange(true);
+    // console.log(accessToken);
+    try {
+      await axios.post(
+        `https://api.spotify.com/v1/me/player/${type}`,
+        {},
+        {
+          headers: {
+            Authorization: "Bearer " + accessToken,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setTimeout(() => {
+        getTrack();
+      }, 400);
+    } catch (e) {
+      console.log(e.message);
+    }
+    // console.log(response);
+  };
+
+  const changeSetting = async (setting) => {
+    console.log(setting);
+    let state;
+    if (setting === "repeat") {
+      setRepeatOn((prevState) => !prevState);
+      state = repeatOn ? "off" : "track";
+    } else {
+      setShuffleOn((prevState) => !prevState);
+      state = shuffleOn ? "false" : "true";
+    }
+    try {
+      await axios.put(
+        `https://api.spotify.com/v1/me/player/${setting}/?state=${state}`,
+        {},
+        {
+          headers: {
+            Authorization: "Bearer " + accessToken,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setTimeout(() => {
+        getTrack();
+      }, 200);
+    } catch (e) {
+      console.log(e.message);
+    }
+  };
+
+  const changeState = async () => {
+    setSongChange(true);
+    const state = playerPlaying ? "pause" : "play";
+    await axios.put(
+      `https://api.spotify.com/v1/me/player/${state}`,
+      {},
+      {
+        headers: {
+          Authorization: "Bearer " + accessToken,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    setTimeout(() => {
+      getTrack();
+    }, 200);
+    setPlayerPlaying((prevPlaying) => !prevPlaying);
+  };
 
   return (
     <div
@@ -146,33 +234,38 @@ function Player(props) {
               marginTop: "20vh",
             }}
           >
-            <IconButton>
+            <IconButton onClick={changeTrack.bind(null, "previous")}>
               <SkipPreviousIcon fontSize="large" sx={{ margin: 1 }} />
             </IconButton>
 
             <IconButton>
               {playerPlaying ? (
+                <PauseCircleFilledIcon
+                  fontSize="large"
+                  sx={{ margin: 1 }}
+                  onClick={changeState}
+                />
+              ) : (
                 <PlayCircleFilledWhiteIcon
                   fontSize="large"
                   sx={{ margin: 1 }}
+                  onClick={changeState}
                 />
-              ) : (
-                <PauseCircleFilledIcon fontSize="large" sx={{ margin: 1 }} />
               )}
             </IconButton>
-            <IconButton>
+            <IconButton onClick={changeTrack.bind(null, "next")}>
               <SkipNextIcon fontSize="large" sx={{ margin: 1 }} />
             </IconButton>
             <br />
             <Container>
-              <IconButton>
+              <IconButton onClick={changeSetting.bind(null, "shuffle")}>
                 {shuffleOn ? (
                   <ShuffleOnIcon fontSize="large" sx={{ margin: 1 }} />
                 ) : (
                   <ShuffleIcon fontSize="large" sx={{ margin: 1 }} />
                 )}
               </IconButton>
-              <IconButton>
+              <IconButton onClick={changeSetting.bind(null, "repeat")}>
                 {repeatOn ? (
                   <RepeatOnIcon fontSize="large" sx={{ margin: 1 }} />
                 ) : (
