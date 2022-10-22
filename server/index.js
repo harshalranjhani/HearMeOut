@@ -11,7 +11,7 @@ const bodyParser = require("body-parser");
 require("dotenv").config();
 app.use(cors());
 app.use(bodyParser.json());
-const dbUrl = "mongodb://localhost:27017/hear-me-out";
+const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/hear-me-out";
 const User = require("./models/user");
 const nodemailer = require("nodemailer");
 
