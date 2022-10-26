@@ -6,10 +6,38 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { useSelector } from "react-redux";
+import axios from "axios";
+import { LyricsSharp } from "@mui/icons-material";
 
 export default function ArtistRecommendations({ recommendationData }) {
   const currentTrack = useSelector((state) => state.tracks.currentTrack);
-  // console.log(currentTrack.item.name);
+  const [lyrics, setLyrics] = React.useState("");
+  console.log(currentTrack);
+
+  // const getLyrics = async () => {
+  //   console.log("getting lyrics....");
+  //   const response = await axios.post("http://localhost:5000/lyrics", {
+  //     title: currentTrack.item.name,
+  //     artist: currentTrack.artists[0].name,
+  //   });
+  //   setLyrics(response.lyrics);
+  // };
+
+  React.useEffect(() => {
+    if (!currentTrack.item) return;
+    axios
+      .get("http://localhost:5000/lyrics", {
+        params: {
+          title: currentTrack.item.name,
+          artist: currentTrack.item.artists[0].name,
+        },
+      })
+      .then((res) =>
+        res.data.lyrics ? setLyrics(res.data.lyrics) : setLyrics("Not found")
+      )
+      .catch((e) => console.log(e));
+  });
+
   return (
     <>
       {recommendationData.tracks && (
@@ -21,7 +49,7 @@ export default function ArtistRecommendations({ recommendationData }) {
           }}
         >
           <div>
-            <Typography variant="h4" pl={10}>
+            <Typography variant="h6" pl={10}>
               More Like "{currentTrack.item.name}"
             </Typography>
             <List
@@ -91,6 +119,33 @@ export default function ArtistRecommendations({ recommendationData }) {
                 </ListItem>
               )}
             </List>
+          </div>
+          <div
+            style={{
+              width: "90vw",
+              overflowY: "scroll",
+            }}
+          >
+            <Typography
+              style={{ width: "30vw", textAlign: "center" }}
+              variant="h6"
+            >
+              <LyricsSharp></LyricsSharp>LYRICS
+            </Typography>
+            <div
+              style={{ height: "50vh", margin: "auto", overflowY: "scroll" }}
+            >
+              {lyrics !== "Not found" && (
+                <Typography variant="p" style={{ whiteSpace: "pre-line" }}>
+                  {lyrics}
+                </Typography>
+              )}
+              {lyrics === "Not found" && (
+                <Typography variant="p" style={{ whiteSpace: "pre-line" }}>
+                  Not Found.
+                </Typography>
+              )}
+            </div>
           </div>
         </div>
       )}

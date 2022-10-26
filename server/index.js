@@ -14,6 +14,7 @@ app.use(bodyParser.json());
 const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/hear-me-out";
 const User = require("./models/user");
 const nodemailer = require("nodemailer");
+const lyricsFinder = require("lyrics-finder");
 
 mongoose
   .connect(dbUrl, {
@@ -152,6 +153,16 @@ app.post("/refresh", (req, res) => {
     .catch((err) => {
       console.log(err);
     });
+});
+
+app.get("/lyrics", async (req, res) => {
+  console.log("lyrics route reached");
+  const { title, artist } = req.query;
+  console.log("title", title);
+  console.log("artist", artist);
+  let lyrics = (await lyricsFinder(artist, title)) || "Not Found!";
+  console.log(lyrics);
+  res.send({ lyrics });
 });
 
 app.listen(5000, () => {
