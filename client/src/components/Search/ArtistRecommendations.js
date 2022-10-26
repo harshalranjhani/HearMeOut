@@ -8,20 +8,12 @@ import Typography from "@mui/material/Typography";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { LyricsSharp } from "@mui/icons-material";
+import AssistantIcon from "@mui/icons-material/Assistant";
 
 export default function ArtistRecommendations({ recommendationData }) {
   const currentTrack = useSelector((state) => state.tracks.currentTrack);
   const [lyrics, setLyrics] = React.useState("");
   console.log(currentTrack);
-
-  // const getLyrics = async () => {
-  //   console.log("getting lyrics....");
-  //   const response = await axios.post("http://localhost:5000/lyrics", {
-  //     title: currentTrack.item.name,
-  //     artist: currentTrack.artists[0].name,
-  //   });
-  //   setLyrics(response.lyrics);
-  // };
 
   React.useEffect(() => {
     if (!currentTrack.item) return;
@@ -36,7 +28,7 @@ export default function ArtistRecommendations({ recommendationData }) {
         res.data.lyrics ? setLyrics(res.data.lyrics) : setLyrics("Not found")
       )
       .catch((e) => console.log(e));
-  });
+  }, [currentTrack.item]);
 
   return (
     <>
@@ -50,7 +42,8 @@ export default function ArtistRecommendations({ recommendationData }) {
         >
           <div>
             <Typography variant="h6" pl={10}>
-              More Like "{currentTrack.item.name}"
+              <AssistantIcon></AssistantIcon>More Like "{currentTrack.item.name}
+              "
             </Typography>
             <List
               sx={{
@@ -86,7 +79,7 @@ export default function ArtistRecommendations({ recommendationData }) {
                       {track.album && (
                         <Avatar
                           alt={track.name}
-                          src={track.album.images[2].url}
+                          src={track.album.images[2].url || ""}
                         />
                       )}
                       {!track.album && (
@@ -135,16 +128,9 @@ export default function ArtistRecommendations({ recommendationData }) {
             <div
               style={{ height: "50vh", margin: "auto", overflowY: "scroll" }}
             >
-              {lyrics !== "Not found" && (
-                <Typography variant="p" style={{ whiteSpace: "pre-line" }}>
-                  {lyrics}
-                </Typography>
-              )}
-              {lyrics === "Not found" && (
-                <Typography variant="p" style={{ whiteSpace: "pre-line" }}>
-                  Not Found.
-                </Typography>
-              )}
+              <Typography variant="p" style={{ whiteSpace: "pre-line" }}>
+                {lyrics}
+              </Typography>
             </div>
           </div>
         </div>

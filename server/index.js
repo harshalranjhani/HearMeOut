@@ -161,7 +161,7 @@ app.get("/lyrics", async (req, res) => {
   console.log("title", title);
   console.log("artist", artist);
   let lyrics = (await lyricsFinder(artist, title)) || "Not Found!";
-  console.log(lyrics);
+  // console.log(lyrics);
   res.send({ lyrics });
 });
 

@@ -13,7 +13,6 @@ import classes from "./Player.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { tracksActions } from "../../store/tracks-slice";
-import { current } from "@reduxjs/toolkit";
 
 function Player(props) {
   const [playerPlaying, setPlayerPlaying] = useState(false);
@@ -276,11 +275,15 @@ function Player(props) {
             <Container>
               <Typography variant="h5" sx={{ margin: "auto" }}>
                 Now Playing <br />
-                <Typography variant="subtitle1" gutterBottom>
+                <Typography
+                  style={{ width: "200px" }}
+                  variant="subtitle1"
+                  gutterBottom
+                >
                   <AudiotrackIcon sx={{ marginTop: 1 }} />
                   {currentlyPlaying.item.name}
                 </Typography>
-                <Typography>
+                <Typography style={{ width: "200px" }}>
                   {currentlyPlaying.item.artists
                     .map((artist) => artist.name)
                     .join(", ")}

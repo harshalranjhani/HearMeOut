@@ -75,6 +75,11 @@ export default function Search() {
         autoComplete="off"
       >
         <Input
+          onChange={(e) => {
+            if (e.target.value === "") {
+              setSearchData([]);
+            }
+          }}
           inputRef={searchTerm}
           fullWidth
           placeholder="Search for songs, artists and more"
