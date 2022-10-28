@@ -7,7 +7,7 @@ import MarqueeText from "../MarqueeText/MarqueeText";
 import useAuth from "../../hooks/useAuth";
 
 const clientId = "46f8b7fe2f6a4e36b35466d68bb81637";
-const redirectUrl = "http://localhost:3000";
+const redirectUrl = "https://hear-me-out.vercel.app/";
 const scope = [
   "user-read-private",
   "user-read-email",
@@ -15,14 +15,10 @@ const scope = [
   "user-read-playback-state",
   "user-read-currently-playing",
   "user-read-recently-played",
-  "user-top-read",
-  "user-follow-modify",
-  "user-follow-read",
   "playlist-read-private",
   "playlist-read-collaborative",
   "playlist-modify-private",
   "playlist-modify-public",
-  "app-remote-control",
   "streaming",
   "user-read-playback-position",
 ];
