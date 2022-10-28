@@ -18,7 +18,7 @@ export default function ArtistRecommendations({ recommendationData }) {
   React.useEffect(() => {
     if (!currentTrack.item) return;
     axios
-      .get("http://localhost:5000/lyrics", {
+      .get("https://sheltered-chamber-14740.herokuapp.com/lyrics", {
         params: {
           title: currentTrack.item.name,
           artist: currentTrack.item.artists[0].name,
@@ -41,7 +41,7 @@ export default function ArtistRecommendations({ recommendationData }) {
           }}
         >
           <div>
-            <Typography variant="h6" pl={10}>
+            <Typography variant="h6" pl={2}>
               <AssistantIcon></AssistantIcon>More Like "{currentTrack.item.name}
               "
             </Typography>
@@ -76,7 +76,7 @@ export default function ArtistRecommendations({ recommendationData }) {
                     key={track.uri}
                   >
                     <ListItemAvatar>
-                      {track.album && (
+                      {track.album.images.length && (
                         <Avatar
                           alt={track.name}
                           src={track.album.images[2].url || ""}

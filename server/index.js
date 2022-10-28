@@ -29,6 +29,10 @@ mongoose
     console.log(err);
   });
 
+app.get("/", (req, res) => {
+  res.send("Application successfully deployed!");
+});
+
 const welcomeMessage = `<!DOCTYPE html>
         <html lang="en">
         <head>
@@ -165,6 +169,8 @@ app.get("/lyrics", async (req, res) => {
   res.send({ lyrics });
 });
 
-app.listen(5000, () => {
-  console.log("App is listening on port 5000");
+const port = process.env.PORT || 5000;
+
+app.listen(port, () => {  
+  console.log(`App is listening on port ${port}`);
 });

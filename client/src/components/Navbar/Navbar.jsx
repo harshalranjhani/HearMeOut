@@ -82,7 +82,7 @@ const ResponsiveAppBar = () => {
         );
       }
       console.log(response.data.email);
-      await axios.post("http://localhost:5000/register", {
+      await axios.post("https://sheltered-chamber-14740.herokuapp.com/register", {
         email: response.data.email,
       });
     };

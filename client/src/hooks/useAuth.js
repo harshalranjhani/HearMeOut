@@ -11,7 +11,7 @@ export default function useAuth(code) {
 
   useEffect(() => {
     axios
-      .post("http://localhost:5000/login", { code })
+      .post("https://sheltered-chamber-14740.herokuapp.com/login", { code })
       .then((res) => {
         setAccessToken(res.data.accessToken);
         setRefreshToken(res.data.refreshToken);
@@ -45,7 +45,7 @@ export default function useAuth(code) {
     if (!storedRefreshToken || !expiresIn) return;
     const interval = setInterval(() => {
       axios
-        .post("http://localhost:5000/refresh", { storedRefreshToken })
+        .post("https://sheltered-chamber-14740.herokuapp.com/refresh", { storedRefreshToken })
         .then((res) => {
           setAccessToken(res.data.accessToken);
           setExpiresIn(res.data.expiresIn);
