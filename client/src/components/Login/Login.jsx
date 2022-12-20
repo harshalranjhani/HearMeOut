@@ -15,10 +15,10 @@ const scope = [
   "user-read-playback-state",
   "user-read-currently-playing",
   "user-read-recently-played",
+  "user-top-read",
   "playlist-read-private",
   "playlist-read-collaborative",
-  "playlist-modify-private",
-  "playlist-modify-public",
+  "user-follow-read",
   "streaming",
   "user-read-playback-position",
 ];

@@ -23,7 +23,10 @@ export default function Search() {
   });
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (searchTerm.current.value === "") setSearchData([]);
+    if (searchTerm.current.value.trim() === "") {
+      setSearchData([]);
+      return;
+    }
     const response = await axios.get(
       `https://api.spotify.com/v1/search?q=${searchTerm.current.value}&type=track,artist,album&include_external=audio&limit=35`,
       {
@@ -33,7 +36,7 @@ export default function Search() {
         },
       }
     );
-    console.log(response);
+    // console.log(response);
     setSearchData(response.data);
   };
 
@@ -52,14 +55,14 @@ export default function Search() {
         }
       );
       setRecommendationData(response.data);
-      console.log(recommendationData);
+      // console.log(recommendationData);
     };
 
     if (currentTrack && !searchData.length) {
       getRecommendations();
     }
     // getRecommendations();
-  }, [currentTrack, searchData.length]);
+  }, [accessToken, artistIds, currentTrack, searchData.length]);
 
   return (
     <div style={{ width: 500 }}>
